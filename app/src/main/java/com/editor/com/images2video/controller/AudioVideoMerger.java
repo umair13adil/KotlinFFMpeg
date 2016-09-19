@@ -119,7 +119,9 @@ public class AudioVideoMerger {
         final File outputLocation = getConvertedFile();
 
         //Trim starting from 10 seconds and end at 16 seconds (total time 6 seconds)
-        final String[] cmd = new String[]{"-i", video.getPath(), "-i", audio.getPath(), "-shortest", outputLocation.getPath()};
+        final String[] cmd = new String[]{"-i", video.getPath(), "-i", audio.getPath(),"-c:v","copy"
+                ,"-c:a","aac","-strict","experimental","-map","0:v:0","-map","1:a:0",
+                "-shortest", outputLocation.getPath()};
 
         try {
             FFmpeg.getInstance(context).execute(cmd, new ExecuteBinaryResponseHandler() {

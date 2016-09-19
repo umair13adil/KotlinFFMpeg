@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Images2Video</string>
+
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="short_seconds">sec</string>
+    <string name="megabyte">MB</string>
+    <string name="kilobyte">KB</string>
 </resources>

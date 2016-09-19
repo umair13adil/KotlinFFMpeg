@@ -42,4 +42,13 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="25dp"
         android:id="@+id/button3" />
+
+    <Button
+        android:text="Merge Audio Video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button3"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="26dp"
+        android:id="@+id/button4" />
 </RelativeLayout>

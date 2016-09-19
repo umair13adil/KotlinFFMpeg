@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.editor.com.images2video.controller.AudioTrimmer;
+import com.editor.com.images2video.controller.AudioVideoMerger;
 import com.editor.com.images2video.controller.Images2Movie;
 import com.editor.com.images2video.controller.VideoTrimmer;
 import com.editor.com.images2video.controller.callback.IConvertCallback;
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Collection> listStore = new ArrayList<Collection>();
     private Collection collection;
 
-    Button btn_make_movie, btn_trim_audio,btn_trim_video;
+    Button btn_make_movie, btn_trim_audio,btn_trim_video,btn_merge;
 
     File[] myImages;
 
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         btn_make_movie = (Button) findViewById(R.id.button);
         btn_trim_audio = (Button) findViewById(R.id.button2);
         btn_trim_video = (Button) findViewById(R.id.button3);
+        btn_merge = (Button) findViewById(R.id.button4);
 
 
         btn_make_movie.setOnClickListener(new View.OnClickListener() {
@@ -116,6 +118,32 @@ public class MainActivity extends AppCompatActivity {
                         .setFormat(AudioFormat.MP3)
                         .setCallback(callback)
                         .trim();
+            }
+        });
+
+        btn_merge.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                IConvertCallback callback = new IConvertCallback() {
+                    @Override
+                    public void onSuccess(File convertedFile) {
+                        Log.i(TAG, "Done: " + convertedFile.getName());
+                    }
+
+                    @Override
+                    public void onFailure(Exception error) {
+                        Log.e(TAG, "Error: " + error);
+                    }
+                };
+                Toast.makeText(context, "Merging Movie...", Toast.LENGTH_SHORT).show();
+                File video = new File(Environment.getExternalStorageDirectory() + File.separator + Constants.MY_FOLDER + File.separator + "video.mp4");
+                File audio = new File(Environment.getExternalStorageDirectory() + File.separator + Constants.MY_FOLDER + File.separator + "sound.mp3");
+                AudioVideoMerger.with(context)
+                        .setAudioFile(audio)
+                        .setVideoFile(video)
+                        .setFormat(AudioFormat.MP3)
+                        .setCallback(callback)
+                        .merge();
             }
         });
 

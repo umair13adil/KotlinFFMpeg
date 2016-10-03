@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.editor.com.images2video.controller.AudioTrimmer;
 import com.editor.com.images2video.controller.AudioVideoMerger;
 import com.editor.com.images2video.controller.Images2Movie;
+import com.editor.com.images2video.controller.VideoResizer;
 import com.editor.com.images2video.controller.VideoTrimmer;
 import com.editor.com.images2video.controller.callback.IConvertCallback;
 import com.editor.com.images2video.controller.model.AudioFormat;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Collection> listStore = new ArrayList<Collection>();
     private Collection collection;
 
-    Button btn_make_movie, btn_trim_audio,btn_trim_video,btn_merge;
+    Button btn_make_movie, btn_trim_audio,btn_trim_video,btn_merge,btn_resize_video;
 
     File[] myImages;
 
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         btn_trim_audio = (Button) findViewById(R.id.button2);
         btn_trim_video = (Button) findViewById(R.id.button3);
         btn_merge = (Button) findViewById(R.id.button4);
+        btn_resize_video = (Button) findViewById(R.id.btn_resize_video);
 
 
         btn_make_movie.setOnClickListener(new View.OnClickListener() {
@@ -118,6 +120,29 @@ public class MainActivity extends AppCompatActivity {
                         .setFormat(AudioFormat.MP3)
                         .setCallback(callback)
                         .trim();
+            }
+        });
+
+        btn_resize_video.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                IConvertCallback callback = new IConvertCallback() {
+                    @Override
+                    public void onSuccess(File convertedFile) {
+                        Log.i(TAG, "Done: " + convertedFile.getName());
+                    }
+
+                    @Override
+                    public void onFailure(Exception error) {
+                        Log.e(TAG, "Error: " + error);
+                    }
+                };
+                Toast.makeText(context, "Resizing Movie...", Toast.LENGTH_SHORT).show();
+                File video = new File(Environment.getExternalStorageDirectory() + File.separator + Constants.MY_FOLDER + File.separator + "video2.mp4");
+                VideoResizer.with(context)
+                        .setFile(video)
+                        .setCallback(callback)
+                        .resize();
             }
         });
 

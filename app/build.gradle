@@ -1,12 +1,13 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.0"
+    compileSdkVersion 27
     defaultConfig {
-        applicationId "com.editor.com.images2video"
+        applicationId "com.blackbox.ffmpeg.examples"
         minSdkVersion 16
-        targetSdkVersion 24
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -24,8 +25,17 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:24.1.1'
+    compile 'com.android.support:appcompat-v7:27.0.2'
     testCompile 'junit:junit:4.12'
     compile 'com.writingminds:FFmpegAndroid:0.3.2'
     compile 'org.jcodec:jcodec-android:0.1.9'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    //RxKotlin
+    implementation "io.reactivex.rxjava2:rxkotlin:2.2.0"
+    implementation "android.arch.persistence.room:rxjava2:1.0.0"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.1"
+}
+repositories {
+    mavenCentral()
 }

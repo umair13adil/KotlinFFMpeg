@@ -10,4 +10,6 @@ interface FFMpegCallback {
 
     fun onFailure(error: Exception)
 
+    fun onNotAvailable(error: Exception)
+
 }

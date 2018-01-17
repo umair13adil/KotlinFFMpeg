@@ -8,8 +8,6 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 object Utils {
@@ -71,12 +69,13 @@ object Utils {
         File(path).outputStream().use { this.copyTo(it) }
     }
 
-    fun getConvertedFile(name: String): File {
-        val simpleDateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
-        val timeStamp = simpleDateFormat.format(Date())
+    fun getConvertedFile(folder: String, fileName: String): File {
+        val f = File(folder)
 
-        val path = outputPath + timeStamp + "_" + name
-        return File(path)
+        if (!f.exists())
+            f.mkdirs()
+
+        return File(f.path + File.separator + fileName)
     }
 
     fun refreshGallery(path: String, context: Context) {

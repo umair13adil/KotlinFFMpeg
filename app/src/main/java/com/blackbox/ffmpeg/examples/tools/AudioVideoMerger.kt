@@ -6,6 +6,7 @@ import com.blackbox.ffmpeg.examples.utils.AudioFormat
 import com.blackbox.ffmpeg.examples.utils.Utils
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException
 import java.io.File
 import java.io.IOException
 
@@ -14,10 +15,13 @@ import java.io.IOException
  */
 
 class AudioVideoMerger private constructor(private val context: Context) {
+
     private var audio: File? = null
     private var video: File? = null
     private var format: AudioFormat? = null
     private var callback: FFMpegCallback? = null
+    private var outputPath = ""
+    private var outputFileName = ""
 
     fun setAudioFile(originalFiles: File): AudioVideoMerger {
         this.audio = originalFiles
@@ -39,6 +43,16 @@ class AudioVideoMerger private constructor(private val context: Context) {
         return this
     }
 
+    fun setOutputPath(output: String): AudioVideoMerger {
+        this.outputPath = output
+        return this
+    }
+
+    fun setOutputFileName(output: String): AudioVideoMerger {
+        this.outputFileName = output
+        return this
+    }
+
     fun merge() {
 
         if (audio == null || !audio!!.exists() || video == null || !video!!.exists()) {
@@ -50,7 +64,7 @@ class AudioVideoMerger private constructor(private val context: Context) {
             return
         }
 
-        val outputLocation = Utils.getConvertedFile("merged.mp4")
+        val outputLocation = Utils.getConvertedFile(outputPath, outputFileName)
 
         //Trim starting from 10 seconds and end at 16 seconds (total time 6 seconds)
         val cmd = arrayOf("-i", video!!.path, "-i", audio!!.path, "-c:v", "copy", "-c:a", "aac", "-strict", "experimental", "-map", "0:v:0", "-map", "1:a:0", "-shortest", outputLocation.path)
@@ -80,6 +94,8 @@ class AudioVideoMerger private constructor(private val context: Context) {
             })
         } catch (e: Exception) {
             callback!!.onFailure(e)
+        }catch (e2: FFmpegCommandAlreadyRunningException) {
+            callback!!.onNotAvailable(e2)
         }
 
     }

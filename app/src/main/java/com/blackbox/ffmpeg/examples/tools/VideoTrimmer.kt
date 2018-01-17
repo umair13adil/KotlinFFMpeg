@@ -6,6 +6,7 @@ import com.blackbox.ffmpeg.examples.utils.AudioFormat
 import com.blackbox.ffmpeg.examples.utils.Utils
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException
 import java.io.File
 import java.io.IOException
 
@@ -14,9 +15,12 @@ import java.io.IOException
  */
 
 class VideoTrimmer private constructor(private val context: Context) {
+
     private var video: File? = null
     private var format: AudioFormat? = null
     private var callback: FFMpegCallback? = null
+    private var outputPath = ""
+    private var outputFileName = ""
 
     fun setFile(originalFiles: File): VideoTrimmer {
         this.video = originalFiles
@@ -33,6 +37,16 @@ class VideoTrimmer private constructor(private val context: Context) {
         return this
     }
 
+    fun setOutputPath(output: String): VideoTrimmer {
+        this.outputPath = output
+        return this
+    }
+
+    fun setOutputFileName(output: String): VideoTrimmer {
+        this.outputFileName = output
+        return this
+    }
+
     fun trim() {
 
         if (video == null || !video!!.exists()) {
@@ -44,7 +58,7 @@ class VideoTrimmer private constructor(private val context: Context) {
             return
         }
 
-        val outputLocation = Utils.getConvertedFile("trimmed.mp4")
+        val outputLocation = Utils.getConvertedFile(outputPath, outputFileName)
 
         //Trim starting from 10 seconds and end at 16 seconds (total time 6 seconds)
         val cmd = arrayOf("-i", video!!.path, "-ss", "00:00:03", "-t", "00:00:08", "-async", "1", outputLocation.path)
@@ -74,6 +88,8 @@ class VideoTrimmer private constructor(private val context: Context) {
             })
         } catch (e: Exception) {
             callback!!.onFailure(e)
+        }catch (e2: FFmpegCommandAlreadyRunningException) {
+            callback!!.onNotAvailable(e2)
         }
 
     }

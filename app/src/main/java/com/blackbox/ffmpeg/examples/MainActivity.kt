@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.widget.Toast
 import com.blackbox.ffmpeg.examples.callback.FFMpegCallback
 import com.blackbox.ffmpeg.examples.tools.*
 import com.blackbox.ffmpeg.examples.utils.AudioFormat
@@ -30,17 +31,19 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
         video = Utils.copyFileToExternalStorage(R.raw.video, "video.mp4", applicationContext)
 
         images = arrayOf(
-                Utils.copyFileToExternalStorage(R.drawable.image1, "img1.jpg", applicationContext)
-                , Utils.copyFileToExternalStorage(R.drawable.image1, "img2.jpg", applicationContext)
-                , Utils.copyFileToExternalStorage(R.drawable.image1, "img3.jpg", applicationContext)
-                , Utils.copyFileToExternalStorage(R.drawable.image1, "img4.jpg", applicationContext)
-                , Utils.copyFileToExternalStorage(R.drawable.image1, "img5.jpg", applicationContext))
+                Utils.copyFileToExternalStorage(R.drawable.image1, "image1.jpg", applicationContext)
+                , Utils.copyFileToExternalStorage(R.drawable.image2, "image2.jpg", applicationContext)
+                , Utils.copyFileToExternalStorage(R.drawable.image3, "image3.jpg", applicationContext)
+                , Utils.copyFileToExternalStorage(R.drawable.image4, "image4.jpg", applicationContext)
+                , Utils.copyFileToExternalStorage(R.drawable.image5, "image5.jpg", applicationContext))
 
 
         btn_create_movie.setOnClickListener {
             MovieMaker.with(context!!)
                     .setFile(images)
                     .setFormat(AudioFormat.MP3)
+                    .setOutputPath(Utils.outputPath + "video")
+                    .setOutputFileName("movie.mp4")
                     .setCallback(this@MainActivity)
                     .convert()
         }
@@ -48,6 +51,10 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
         btn_trim_audio.setOnClickListener {
             AudioTrimmer.with(context!!)
                     .setFile(audio)
+                    .setStartTime("00:00:00")
+                    .setEndTime("00:00:10")
+                    .setOutputPath(Utils.outputPath + "audio")
+                    .setOutputFileName("trimmedAudio.mp3")
                     .setFormat(AudioFormat.MP3)
                     .setCallback(this@MainActivity)
                     .trim()
@@ -58,13 +65,17 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
             VideoTrimmer.with(context!!)
                     .setFile(video)
                     .setFormat(AudioFormat.MP3)
+                    .setOutputPath(Utils.outputPath + "video")
+                    .setOutputFileName("trimmedVideo.mp4")
                     .setCallback(this@MainActivity)
                     .trim()
         }
 
         btn_resize_video.setOnClickListener {
-             VideoResizer.with(context!!)
+            VideoResizer.with(context!!)
                     .setFile(video)
+                    .setOutputPath(Utils.outputPath + "video")
+                    .setOutputFileName("resized.mp4")
                     .setCallback(this@MainActivity)
                     .resize()
         }
@@ -74,6 +85,8 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
                     .setAudioFile(audio)
                     .setVideoFile(video)
                     .setFormat(AudioFormat.MP3)
+                    .setOutputPath(Utils.outputPath + "video")
+                    .setOutputFileName("merged.mp4")
                     .setCallback(this@MainActivity)
                     .merge()
         }
@@ -94,5 +107,10 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
         error.printStackTrace()
         txt_output.text = error.message
         Log.e(TAG, "Error: " + error)
+    }
+
+    override fun onNotAvailable(error: Exception) {
+        txt_output.text = error.message
+        Toast.makeText(this, error.message, Toast.LENGTH_SHORT).show()
     }
 }

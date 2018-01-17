@@ -5,6 +5,7 @@ import com.blackbox.ffmpeg.examples.callback.FFMpegCallback
 import com.blackbox.ffmpeg.examples.utils.Utils
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException
 import java.io.File
 import java.io.IOException
 
@@ -13,8 +14,11 @@ import java.io.IOException
  */
 
 class VideoResizer private constructor(private val context: Context) {
+
     private var video: File? = null
     private var callback: FFMpegCallback? = null
+    private var outputPath = ""
+    private var outputFileName = ""
 
     fun setFile(originalFiles: File): VideoResizer {
         this.video = originalFiles
@@ -23,6 +27,16 @@ class VideoResizer private constructor(private val context: Context) {
 
     fun setCallback(callback: FFMpegCallback): VideoResizer {
         this.callback = callback
+        return this
+    }
+
+    fun setOutputPath(output: String): VideoResizer {
+        this.outputPath = output
+        return this
+    }
+
+    fun setOutputFileName(output: String): VideoResizer {
+        this.outputFileName = output
         return this
     }
 
@@ -37,7 +51,7 @@ class VideoResizer private constructor(private val context: Context) {
             return
         }
 
-        val outputLocation = Utils.getConvertedFile("resized.mp4")
+        val outputLocation = Utils.getConvertedFile(outputPath, outputFileName)
 
 
         //final String[] cmd = new String[]{"-i", video.getPath(), "-vf", "scale=320:240",outputLocation.getPath(),"-hide_banner"};
@@ -68,6 +82,8 @@ class VideoResizer private constructor(private val context: Context) {
             })
         } catch (e: Exception) {
             callback!!.onFailure(e)
+        } catch (e2: FFmpegCommandAlreadyRunningException) {
+            callback!!.onNotAvailable(e2)
         }
 
     }

@@ -6,6 +6,7 @@ import com.blackbox.ffmpeg.examples.utils.AudioFormat
 import com.blackbox.ffmpeg.examples.utils.Utils
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException
 import java.io.File
 import java.io.IOException
 
@@ -14,9 +15,15 @@ import java.io.IOException
  */
 
 class AudioTrimmer private constructor(private val context: Context) {
+
     private var audio: File? = null
     private var format: AudioFormat? = null
     private var callback: FFMpegCallback? = null
+
+    private var startTime = "00:00:00"
+    private var endTime = "00:00:00"
+    private var outputPath = ""
+    private var outputFileName = ""
 
     fun setFile(originalFiles: File): AudioTrimmer {
         this.audio = originalFiles
@@ -33,6 +40,26 @@ class AudioTrimmer private constructor(private val context: Context) {
         return this
     }
 
+    fun setStartTime(startTime: String): AudioTrimmer {
+        this.startTime = startTime
+        return this
+    }
+
+    fun setEndTime(endTime: String): AudioTrimmer {
+        this.endTime = endTime
+        return this
+    }
+
+    fun setOutputPath(output: String): AudioTrimmer {
+        this.outputPath = output
+        return this
+    }
+
+    fun setOutputFileName(output: String): AudioTrimmer {
+        this.outputFileName = output
+        return this
+    }
+
     fun trim() {
 
         if (audio == null || !audio!!.exists()) {
@@ -44,10 +71,10 @@ class AudioTrimmer private constructor(private val context: Context) {
             return
         }
 
-        val outputLocation = Utils.getConvertedFile("trimmed.mp3")
+        val outputLocation = Utils.getConvertedFile(outputPath, outputFileName)
 
-        //Trim starting from 10 seconds and end at 16 seconds (total time 6 seconds)
-        val cmd = arrayOf("-i", audio!!.path, "-ss", "10", "-t", "6", "-acodec", "copy", outputLocation.path)
+        //Trim starting from start Time to End time
+        val cmd = arrayOf("-i", audio!!.path, "-ss", startTime, "-t", endTime, "-acodec", "copy", outputLocation.path)
 
         try {
             FFmpeg.getInstance(context).execute(cmd, object : ExecuteBinaryResponseHandler() {
@@ -74,6 +101,8 @@ class AudioTrimmer private constructor(private val context: Context) {
             })
         } catch (e: Exception) {
             callback!!.onFailure(e)
+        } catch (e2: FFmpegCommandAlreadyRunningException) {
+            callback!!.onNotAvailable(e2)
         }
 
     }

@@ -6,13 +6,17 @@ import com.blackbox.ffmpeg.examples.utils.AudioFormat
 import com.blackbox.ffmpeg.examples.utils.Utils
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException
 import java.io.File
 import java.io.IOException
 
 class MovieMaker private constructor(private val context: Context) {
+
     private var images: Array<File>? = null
     private var format: AudioFormat? = null
     private var callback: FFMpegCallback? = null
+    private var outputPath = ""
+    private var outputFileName = ""
 
     fun setFile(originalFiles: Array<File>): MovieMaker {
         this.images = originalFiles
@@ -26,6 +30,16 @@ class MovieMaker private constructor(private val context: Context) {
 
     fun setCallback(callback: FFMpegCallback): MovieMaker {
         this.callback = callback
+        return this
+    }
+
+    fun setOutputPath(output: String): MovieMaker {
+        this.outputPath = output
+        return this
+    }
+
+    fun setOutputFileName(output: String): MovieMaker {
+        this.outputFileName = output
         return this
     }
 
@@ -43,9 +57,9 @@ class MovieMaker private constructor(private val context: Context) {
                 }
             }
         }
-        val outputLocation = Utils.getConvertedFile("vid.mp4")
+        val outputLocation = Utils.getConvertedFile(outputPath, outputFileName)
 
-        val cmd5 = arrayOf("-y", "-loop", "1", "-r", "1", "-i", Utils.outputPath + "img%d.jpg", "-i", Utils.outputPath + "audio.mp3", "-acodec", "aac", "-vcodec", "mpeg4", "-s", "480x320", "-strict", "experimental", "-b:a", "64k", "-shortest", "-f", "mp4", "-r", "5", outputLocation.path)
+        val cmd5 = arrayOf("-y", "-analyzeduration", "20M", "-probesize", "20M", "-loop", "1", "-r", "1", "-i", Utils.outputPath + "image%d.jpg", "-i", Utils.outputPath + "audio.mp3", "-acodec", "aac", "-vcodec", "mpeg4", "-s", "480x320", "-strict", "experimental", "-b:a", "64k", "-shortest", "-f", "mp4", "-r", "5", outputLocation.path)
 
         try {
             FFmpeg.getInstance(context).execute(cmd5, object : ExecuteBinaryResponseHandler() {
@@ -72,6 +86,8 @@ class MovieMaker private constructor(private val context: Context) {
             })
         } catch (e: Exception) {
             callback!!.onFailure(e)
+        } catch (e2: FFmpegCommandAlreadyRunningException) {
+            callback!!.onNotAvailable(e2)
         }
 
     }

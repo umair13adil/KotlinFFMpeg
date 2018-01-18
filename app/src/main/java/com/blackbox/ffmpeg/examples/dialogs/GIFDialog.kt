@@ -7,54 +7,42 @@ import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.widget.AppCompatTextView
-import android.widget.MediaController
-import android.widget.VideoView
 import com.blackbox.ffmpeg.examples.R
 import com.blackbox.ffmpeg.examples.utils.Utils
+import pl.droidsonroids.gif.GifDrawable
+import pl.droidsonroids.gif.GifImageView
 import java.io.File
 
 
 /**
  * Created by umair on 18/01/2018.
  */
-class VideoDialog : DialogFragment() {
+class GIFDialog : DialogFragment() {
 
     companion object {
-        val TAG = VideoDialog::javaClass.name
+        val TAG = GIFDialog::javaClass.name
 
         lateinit var file: File
 
         fun show(fragmentManager: FragmentManager, file: File) {
             this.file = file
-            VideoDialog().show(fragmentManager, TAG)
+            GIFDialog().show(fragmentManager, TAG)
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
-        val view = activity!!.layoutInflater.inflate(R.layout.dialog_video_preview, null)
+        val view = activity!!.layoutInflater.inflate(R.layout.dialog_gif_preview, null)
 
-        val videoView = view.findViewById<VideoView>(R.id.video_view)
+        val gifView = view.findViewById<GifImageView>(R.id.gif_view)
         val videoInfo = view.findViewById<AppCompatTextView>(R.id.video_info)
 
-        videoView.setVideoPath(file.path)
+        val gif = GifDrawable(file.path)
+        gifView.setImageDrawable(gif)
+        gif.start()
 
-        val mediaController = MediaController(activity)
-        mediaController.setAnchorView(videoView)
-        videoView.setMediaController(mediaController)
-
-        //Close this dialog on completion
-        videoView.setOnCompletionListener {
-            dismiss()
-        }
-
-        //Show duration of video
-        videoView.setOnPreparedListener {
-            @SuppressLint("SetTextI18n")
-            videoInfo.text = "Duration: ${Utils.milliSecondsToTimer(videoView.duration.toLong())}\n"
-        }
-
-        videoView.start()
+        videoInfo.text = "Duration: ${Utils.milliSecondsToTimer(gif.duration.toLong())}" + " Frames: ${gif.numberOfFrames}"
 
         return AlertDialog.Builder(activity)
                 .setView(view)

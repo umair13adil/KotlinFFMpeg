@@ -1,4 +1,4 @@
-package com.blackbox.ffmpeg.examples.tools.video
+package com.blackbox.ffmpeg.examples.tools.audio
 
 import android.content.Context
 import com.blackbox.ffmpeg.examples.callback.FFMpegCallback
@@ -10,54 +10,56 @@ import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunnin
 import java.io.File
 import java.io.IOException
 
-class MovieMaker private constructor(private val context: Context) {
+/**
+ * Created by Umair_Adil on 19/09/2016.
+ */
 
-    private var images: Array<File>? = null
-    private var audio: File? = null
+class AudioExtractor private constructor(private val context: Context) {
+
+    private var video: File? = null
     private var callback: FFMpegCallback? = null
     private var outputPath = ""
     private var outputFileName = ""
 
-    fun setFile(originalFiles: Array<File>): MovieMaker {
-        this.images = originalFiles
+    fun setFile(originalFiles: File): AudioExtractor {
+        this.video = originalFiles
         return this
     }
 
-    fun setAudio(originalFiles: File): MovieMaker {
-        this.audio = originalFiles
-        return this
-    }
-
-    fun setCallback(callback: FFMpegCallback): MovieMaker {
+    fun setCallback(callback: FFMpegCallback): AudioExtractor {
         this.callback = callback
         return this
     }
 
-    fun setOutputPath(output: String): MovieMaker {
+    fun setOutputPath(output: String): AudioExtractor {
         this.outputPath = output
         return this
     }
 
-    fun setOutputFileName(output: String): MovieMaker {
+    fun setOutputFileName(output: String): AudioExtractor {
         this.outputFileName = output
         return this
     }
 
-    fun convert() {
+    fun extract() {
+
+        if (video == null || !video!!.exists()) {
+            callback!!.onFailure(IOException("File not exists"))
+            return
+        }
+        if (!video!!.canRead()) {
+            callback!!.onFailure(IOException("Can't read the file. Missing permission?"))
+            return
+        }
 
         val outputLocation = Utils.getConvertedFile(outputPath, outputFileName)
 
-        //Here the images are from image1.png to image5.png
-        //framerate 1/3.784 means, each image runs for 3.784 seconds
-        //c:v libx264: video codec H.264
-        //r 30: output video fps 30
-        //pix_fmt yuv420p: output video pixel format
-        //c:a aac: encode the audio using aac
-        //shortest: end the video as soon as the audio is done.
-        val cmd5 = arrayOf("-analyzeduration", "1M", "-probesize", "1M", "-y", "-framerate", "1/3.79", "-i", Utils.outputPath + "image%d.png", "-i", audio!!.path, "-c:v", "libx264", "-r", "30", "-pix_fmt", "yuv420p", "-c:a", "aac", "-shortest", outputLocation.path)
+        //Create Audio File with 192Kbps
+        //Select .mp3 format
+        val cmd = arrayOf("-i", video!!.path, "-vn", "-ar", "44100", "-ac", "2", "-ab", "192", "-f", "mp3", outputLocation.path)
 
         try {
-            FFmpeg.getInstance(context).execute(cmd5, object : ExecuteBinaryResponseHandler() {
+            FFmpeg.getInstance(context).execute(cmd, object : ExecuteBinaryResponseHandler() {
                 override fun onStart() {}
 
                 override fun onProgress(message: String?) {
@@ -66,7 +68,7 @@ class MovieMaker private constructor(private val context: Context) {
 
                 override fun onSuccess(message: String?) {
                     Utils.refreshGallery(outputLocation.path, context)
-                    callback!!.onSuccess(outputLocation, OutputType.TYPE_VIDEO)
+                    callback!!.onSuccess(outputLocation, OutputType.TYPE_AUDIO)
 
                 }
 
@@ -91,10 +93,10 @@ class MovieMaker private constructor(private val context: Context) {
 
     companion object {
 
-        private val TAG = "MovieMaker"
+        private val TAG = "AudioExtractor"
 
-        fun with(context: Context): MovieMaker {
-            return MovieMaker(context)
+        fun with(context: Context): AudioExtractor {
+            return AudioExtractor(context)
         }
     }
 }

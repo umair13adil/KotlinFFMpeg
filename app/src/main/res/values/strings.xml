@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">FFMpeg Examples</string>
+
+    <!--MainActivity-->
+    <string name="txt_split_video">Split Video</string>
+    <string name="txt_make_movie">Make Movie</string>
+    <string name="txt_extract_audio">Extract Audio</string>
+    <string name="txt_trim_audio">Trim Audio</string>
+    <string name="txt_trim_video">Trim Video</string>
+    <string name="txt_merge_audio_video">Merge Audio Video</string>
+    <string name="txt_resize_video">Resize Video</string>
+    <string name="txt_video_to_gif">Video 2 GIF</string>
+    <string name="txt_video_to_images">Video 2 Images</string>
+    <string name="txt_text_on_video">Text On Video</string>
+    <string name="txt_audio_section">Audio Tools</string>
+    <string name="txt_video_section">Video Tools</string>
+    <string name="txt_image_section">Image Tools</string>
+
 </resources>

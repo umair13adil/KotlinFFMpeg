@@ -20,6 +20,7 @@ class VideoResizer private constructor(private val context: Context) {
     private var callback: FFMpegCallback? = null
     private var outputPath = ""
     private var outputFileName = ""
+    private var size = ""
 
     fun setFile(originalFiles: File): VideoResizer {
         this.video = originalFiles
@@ -41,6 +42,11 @@ class VideoResizer private constructor(private val context: Context) {
         return this
     }
 
+    fun setSize(output: String): VideoResizer {
+        this.size = output
+        return this
+    }
+
     fun resize() {
 
         if (video == null || !video!!.exists()) {
@@ -54,9 +60,7 @@ class VideoResizer private constructor(private val context: Context) {
 
         val outputLocation = Utils.getConvertedFile(outputPath, outputFileName)
 
-
-        //final String[] cmd = new String[]{"-i", video.getPath(), "-vf", "scale=320:240",outputLocation.getPath(),"-hide_banner"};
-        val cmd = arrayOf("-i", video!!.path, "-vf", "scale=1920:1080", outputLocation.path, "-hide_banner")
+        val cmd = arrayOf("-i", video!!.path, "-vf", "scale=" + size, outputLocation.path, "-hide_banner")
 
         try {
             FFmpeg.getInstance(context).execute(cmd, object : ExecuteBinaryResponseHandler() {

@@ -21,15 +21,21 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:27.0.2'
-    testCompile 'junit:junit:4.12'
-    compile 'com.writingminds:FFmpegAndroid:0.3.2'
-    compile 'org.jcodec:jcodec-android:0.1.9'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation 'com.android.support:appcompat-v7:27.0.2'
+    implementation 'com.android.support:gridlayout-v7:27.0.2'
+
+    testImplementation 'junit:junit:4.12'
+    //FFmpeg Library
+    implementation 'com.writingminds:FFmpegAndroid:0.3.2'
+    implementation 'org.jcodec:jcodec-android:0.1.9'
+    //GIF Viewer
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 repositories {
     mavenCentral()

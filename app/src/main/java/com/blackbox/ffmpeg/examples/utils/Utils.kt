@@ -23,34 +23,6 @@ object Utils {
             return path
         }
 
-    fun isSupportedFormat(f: File): Boolean {
-        val ext = getFileExtension(f) ?: return false
-        try {
-            if (SupportedFileFormat.valueOf(ext) != null) {
-                return true
-            }
-        } catch (e: IllegalArgumentException) {
-            //Not known enum value
-            return false
-        }
-
-        return false
-    }
-
-    fun getFileExtension(f: File): String? {
-        val i = f.name.lastIndexOf('.')
-        return if (i > 0) {
-            f.name.substring(i + 1)
-        } else
-            null
-    }
-
-    enum class SupportedFileFormat private constructor(val fileSuffix: String) {
-        JPG("jpg"),
-        JPEG("jpeg"),
-        PNG("png")
-    }
-
     fun copyFileToExternalStorage(resourceId: Int, resourceName: String, context: Context): File {
         val pathSDCard = outputPath + resourceName
         try {

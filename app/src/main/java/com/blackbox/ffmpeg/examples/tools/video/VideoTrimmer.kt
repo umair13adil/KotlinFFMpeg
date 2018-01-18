@@ -95,7 +95,7 @@ class VideoTrimmer private constructor(private val context: Context) {
             })
         } catch (e: Exception) {
             callback!!.onFailure(e)
-        }catch (e2: FFmpegCommandAlreadyRunningException) {
+        } catch (e2: FFmpegCommandAlreadyRunningException) {
             callback!!.onNotAvailable(e2)
         }
 

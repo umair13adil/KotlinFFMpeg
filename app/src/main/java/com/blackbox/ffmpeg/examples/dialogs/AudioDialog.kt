@@ -59,6 +59,7 @@ class AudioDialog : DialogFragment() {
         startTime = mediaPlayer.currentPosition.toLong()
         seekBar.max = finalTime.toInt()
 
+        //Close this dialog on completion
         mediaPlayer.setOnCompletionListener {
             dismiss()
         }

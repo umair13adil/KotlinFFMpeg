@@ -3,7 +3,6 @@ package com.blackbox.ffmpeg.examples.tools.video
 import android.content.Context
 import com.blackbox.ffmpeg.examples.callback.FFMpegCallback
 import com.blackbox.ffmpeg.examples.tools.OutputType
-import com.blackbox.ffmpeg.examples.utils.AudioFormat
 import com.blackbox.ffmpeg.examples.utils.Utils
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg
@@ -19,7 +18,6 @@ class AudioVideoMerger private constructor(private val context: Context) {
 
     private var audio: File? = null
     private var video: File? = null
-    private var format: AudioFormat? = null
     private var callback: FFMpegCallback? = null
     private var outputPath = ""
     private var outputFileName = ""
@@ -31,11 +29,6 @@ class AudioVideoMerger private constructor(private val context: Context) {
 
     fun setVideoFile(originalFiles: File): AudioVideoMerger {
         this.video = originalFiles
-        return this
-    }
-
-    fun setFormat(format: AudioFormat): AudioVideoMerger {
-        this.format = format
         return this
     }
 
@@ -67,7 +60,6 @@ class AudioVideoMerger private constructor(private val context: Context) {
 
         val outputLocation = Utils.getConvertedFile(outputPath, outputFileName)
 
-        //Trim starting from 10 seconds and end at 16 seconds (total time 6 seconds)
         val cmd = arrayOf("-i", video!!.path, "-i", audio!!.path, "-c:v", "copy", "-c:a", "aac", "-strict", "experimental", "-map", "0:v:0", "-map", "1:a:0", "-shortest", outputLocation.path)
 
         try {
@@ -97,7 +89,7 @@ class AudioVideoMerger private constructor(private val context: Context) {
             })
         } catch (e: Exception) {
             callback!!.onFailure(e)
-        }catch (e2: FFmpegCommandAlreadyRunningException) {
+        } catch (e2: FFmpegCommandAlreadyRunningException) {
             callback!!.onNotAvailable(e2)
         }
 

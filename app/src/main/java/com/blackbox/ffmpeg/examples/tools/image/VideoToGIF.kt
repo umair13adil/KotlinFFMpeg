@@ -72,7 +72,7 @@ class VideoToGIF private constructor(private val context: Context) {
 
         val outputLocation = Utils.getConvertedFile(outputPath, outputFileName)
 
-        val cmd = arrayOf("-i", video!!.path, "-vf", "scale="+scale+":-1", "-t", duration, "-r", fps, outputLocation.path)
+        val cmd = arrayOf("-i", video!!.path, "-vf", "scale=" + scale + ":-1", "-t", duration, "-r", fps, outputLocation.path)
 
         try {
             FFmpeg.getInstance(context).execute(cmd, object : ExecuteBinaryResponseHandler() {
@@ -101,7 +101,7 @@ class VideoToGIF private constructor(private val context: Context) {
             })
         } catch (e: Exception) {
             callback!!.onFailure(e)
-        }catch (e2: FFmpegCommandAlreadyRunningException) {
+        } catch (e2: FFmpegCommandAlreadyRunningException) {
             callback!!.onNotAvailable(e2)
         }
 

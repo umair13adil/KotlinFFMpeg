@@ -80,7 +80,7 @@ class AudioTrimmer private constructor(private val context: Context) {
 
                 override fun onSuccess(message: String?) {
                     Utils.refreshGallery(outputLocation.path, context)
-                    callback!!.onSuccess(outputLocation,OutputType.TYPE_AUDIO)
+                    callback!!.onSuccess(outputLocation, OutputType.TYPE_AUDIO)
 
                 }
 

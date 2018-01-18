@@ -7,14 +7,15 @@ import android.util.Log
 import android.widget.Toast
 import com.blackbox.ffmpeg.examples.callback.FFMpegCallback
 import com.blackbox.ffmpeg.examples.dialogs.AudioDialog
+import com.blackbox.ffmpeg.examples.dialogs.GIFDialog
 import com.blackbox.ffmpeg.examples.dialogs.ProgressDialog
 import com.blackbox.ffmpeg.examples.dialogs.VideoDialog
 import com.blackbox.ffmpeg.examples.tools.OutputType
+import com.blackbox.ffmpeg.examples.tools.audio.AudioExtractor
 import com.blackbox.ffmpeg.examples.tools.audio.AudioTrimmer
 import com.blackbox.ffmpeg.examples.tools.image.VideoToGIF
 import com.blackbox.ffmpeg.examples.tools.image.VideoToImages
 import com.blackbox.ffmpeg.examples.tools.video.*
-import com.blackbox.ffmpeg.examples.utils.AudioFormat
 import com.blackbox.ffmpeg.examples.utils.Utils
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
@@ -27,11 +28,13 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
     lateinit var audio: File
     lateinit var audio2: File
     lateinit var video: File
+    lateinit var video2: File
     lateinit var images: Array<File>
     lateinit var font: File
 
     var inProgress = false
 
+    //Used to publish progress to dialog fragment
     interface ProgressPublish {
         fun onProgress(progress: String)
 
@@ -55,21 +58,22 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
         audio = Utils.copyFileToExternalStorage(R.raw.audio, "audio.mp3", applicationContext)
         audio2 = Utils.copyFileToExternalStorage(R.raw.audio, "audio2.mp3", applicationContext)
         video = Utils.copyFileToExternalStorage(R.raw.video, "video.mp4", applicationContext)
+        video2 = Utils.copyFileToExternalStorage(R.raw.video, "video2.mp4", applicationContext)
         font = Utils.copyFileToExternalStorage(R.font.roboto_black, "myFont.ttf", applicationContext)
-
         images = arrayOf(
-                Utils.copyFileToExternalStorage(R.drawable.image1, "image1.jpg", applicationContext)
-                , Utils.copyFileToExternalStorage(R.drawable.image2, "image2.jpg", applicationContext)
-                , Utils.copyFileToExternalStorage(R.drawable.image3, "image3.jpg", applicationContext)
-                , Utils.copyFileToExternalStorage(R.drawable.image4, "image4.jpg", applicationContext)
-                , Utils.copyFileToExternalStorage(R.drawable.image5, "image5.jpg", applicationContext))
+                Utils.copyFileToExternalStorage(R.drawable.image1, "image1.png", applicationContext)
+                , Utils.copyFileToExternalStorage(R.drawable.image2, "image2.png", applicationContext)
+                , Utils.copyFileToExternalStorage(R.drawable.image3, "image3.png", applicationContext)
+                , Utils.copyFileToExternalStorage(R.drawable.image4, "image4.png", applicationContext)
+                , Utils.copyFileToExternalStorage(R.drawable.image5, "image5.png", applicationContext))
 
 
+        //This will create movie using audio & images saved in output directory name 'image%d.png'
         btn_create_movie.setOnClickListener {
 
             if (!inProgress) {
                 MovieMaker.with(context!!)
-                        .setFile(images)
+                        .setAudio(audio2)
                         .setOutputPath(Utils.outputPath + "video")
                         .setOutputFileName("movie_" + System.currentTimeMillis() + ".mp4")
                         .setCallback(this@MainActivity)
@@ -81,13 +85,31 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
             }
         }
 
+        //This will extract audio as .mp3 from a video
+        btn_extract_audio.setOnClickListener {
+
+            if (!inProgress) {
+                AudioExtractor.with(context!!)
+                        .setFile(video2)
+                        .setOutputPath(Utils.outputPath + "audio")
+                        .setOutputFileName("audio_" + System.currentTimeMillis() + ".mp3")
+                        .setCallback(this@MainActivity)
+                        .extract()
+
+                ProgressDialog.show(supportFragmentManager)
+            } else {
+                Toast.makeText(this, "Error: Operation already in progress!", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        //This will cut audio for given start and end times
         btn_trim_audio.setOnClickListener {
 
             if (!inProgress) {
                 AudioTrimmer.with(context!!)
                         .setFile(audio2)
-                        .setStartTime("00:00:05")
-                        .setEndTime("00:00:20")
+                        .setStartTime("00:00:05") //Start at 5 seconds
+                        .setEndTime("00:00:10") //End at 10 seconds
                         .setOutputPath(Utils.outputPath + "audio")
                         .setOutputFileName("trimmed_" + System.currentTimeMillis() + ".mp3")
                         .setCallback(this@MainActivity)
@@ -99,7 +121,7 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
             }
         }
 
-
+        //This will cut video for given start and end times
         btn_trim_video.setOnClickListener {
 
             if (!inProgress) {
@@ -118,6 +140,7 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
             }
         }
 
+        //This will split video into given time segments
         btn_split_video.setOnClickListener {
 
             if (!inProgress) {
@@ -135,11 +158,14 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
             }
         }
 
+        //This will resize video in given size
+        //Note: Size must be in this format = width:height
         btn_resize_video.setOnClickListener {
 
             if (!inProgress) {
                 VideoResizer.with(context!!)
-                        .setFile(video)
+                        .setFile(video2)
+                        .setSize("320:480") //320 X 480
                         .setOutputPath(Utils.outputPath + "video")
                         .setOutputFileName("resized_" + System.currentTimeMillis() + ".mp4")
                         .setCallback(this@MainActivity)
@@ -151,13 +177,14 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
             }
         }
 
+        //This will combine audio with video file.
+        //Original Audio of video will be replaced.
         btn_merge_audio_video.setOnClickListener {
 
             if (!inProgress) {
                 AudioVideoMerger.with(context!!)
                         .setAudioFile(audio)
-                        .setVideoFile(video)
-                        .setFormat(AudioFormat.MP3)
+                        .setVideoFile(video2)
                         .setOutputPath(Utils.outputPath + "video")
                         .setOutputFileName("merged_" + System.currentTimeMillis() + ".mp4")
                         .setCallback(this@MainActivity)
@@ -169,6 +196,7 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
             }
         }
 
+        //This will convert video to GIF.
         btn_video_to_gif.setOnClickListener {
 
             if (!inProgress) {
@@ -176,9 +204,9 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
                         .setFile(video)
                         .setOutputPath(Utils.outputPath + "images")
                         .setOutputFileName("myGif_" + System.currentTimeMillis() + ".gif")
-                        .setDuration("5")
-                        .setScale("500")
-                        .setFPS("10")
+                        .setDuration("5") //Gif duration
+                        .setScale("500") //Size of GIF
+                        .setFPS("10") //Frame rate of GIF
                         .setCallback(this@MainActivity)
                         .create()
 
@@ -188,14 +216,15 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
             }
         }
 
+        //This will extract images from video in provided time
         btn_video_to_images.setOnClickListener {
 
             if (!inProgress) {
                 VideoToImages.with(context!!)
-                        .setFile(video)
+                        .setFile(video2)
                         .setOutputPath(Utils.outputPath + "images")
                         .setOutputFileName("images")
-                        .setInterval("0.25") // Extact image every quarter of second (0.25)
+                        .setInterval("0.25") // Extract image every quarter of second (0.25)
                         .setCallback(this@MainActivity)
                         .extract()
 
@@ -205,19 +234,20 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
             }
         }
 
+        //This will add text overlay on video
         btn_text_on_video.setOnClickListener {
 
             if (!inProgress) {
                 TextOnVideo.with(context!!)
-                        .setFile(video)
+                        .setFile(video2)
                         .setOutputPath(Utils.outputPath + "video")
                         .setOutputFileName("textOnVideo_" + System.currentTimeMillis() + ".mp4")
-                        .setFont(font)
-                        .setText("This is my text that is displayed on this Video!!")
-                        .setColor("#50b90e")
-                        .setSize("34")
-                        .addBorder(true)
-                        .setPosition(TextOnVideo.POSITION_CENTER_BOTTOM)
+                        .setFont(font) //Font .ttf of text
+                        .setText("Text Displayed on Video!!") //Text to be displayed
+                        .setColor("#50b90e") //Color of Text
+                        .setSize("34") //Size of text
+                        .addBorder(true) //This will add background with border on text
+                        .setPosition(TextOnVideo.POSITION_CENTER_BOTTOM) //Can be selected
                         .setCallback(this@MainActivity)
                         .draw()
 
@@ -233,6 +263,7 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
 
     override fun onProgress(progress: String) {
 
+        //Prints log of progress
         Log.i(TAG, "Running: $progress")
 
         //Set this flag to disable any other action until first one is completed
@@ -246,10 +277,11 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
     override fun onSuccess(convertedFile: File, type: String) {
         Toast.makeText(this, "Done!", Toast.LENGTH_SHORT).show()
 
+        //Show preview of outputs for after checking type of media
         when {
             type.equals(OutputType.TYPE_VIDEO) -> VideoDialog.show(supportFragmentManager, convertedFile)
             type.equals(OutputType.TYPE_AUDIO) -> AudioDialog.show(supportFragmentManager, convertedFile)
-            type.equals(OutputType.TYPE_GIF) -> VideoDialog.show(supportFragmentManager, convertedFile)
+            type.equals(OutputType.TYPE_GIF) -> GIFDialog.show(supportFragmentManager, convertedFile)
         }
     }
 

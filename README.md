@@ -6,8 +6,8 @@ App is pre loaded with audio, video, images, font resources which are useful for
 
 Each example will preview result in a dialog. Files are saved in local storage directory and can be directly accessed from there.
 
-![Image1](pictures/image1.png=100x300)
-![Image2](pictures/image2.png=100x300)
+![Image1](pictures/image1.png)
+![Image2](pictures/image2.png)
 
 ### FFMpeg Examples (Video):
 

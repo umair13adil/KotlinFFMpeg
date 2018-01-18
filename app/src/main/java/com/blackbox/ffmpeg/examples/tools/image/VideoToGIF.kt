@@ -1,7 +1,8 @@
-package com.blackbox.ffmpeg.examples.tools
+package com.blackbox.ffmpeg.examples.tools.image
 
 import android.content.Context
 import com.blackbox.ffmpeg.examples.callback.FFMpegCallback
+import com.blackbox.ffmpeg.examples.tools.OutputType
 import com.blackbox.ffmpeg.examples.utils.Utils
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg
@@ -10,37 +11,55 @@ import java.io.File
 import java.io.IOException
 
 /**
- * Created by Umair_Adil on 03/10/2016.
+ * Created by Umair_Adil on 19/09/2016.
  */
 
-class VideoResizer private constructor(private val context: Context) {
+class VideoToGIF private constructor(private val context: Context) {
 
     private var video: File? = null
     private var callback: FFMpegCallback? = null
     private var outputPath = ""
     private var outputFileName = ""
+    private var duration = ""
+    private var fps = ""
+    private var scale = ""
 
-    fun setFile(originalFiles: File): VideoResizer {
+    fun setFile(originalFiles: File): VideoToGIF {
         this.video = originalFiles
         return this
     }
 
-    fun setCallback(callback: FFMpegCallback): VideoResizer {
+    fun setCallback(callback: FFMpegCallback): VideoToGIF {
         this.callback = callback
         return this
     }
 
-    fun setOutputPath(output: String): VideoResizer {
+    fun setOutputPath(output: String): VideoToGIF {
         this.outputPath = output
         return this
     }
 
-    fun setOutputFileName(output: String): VideoResizer {
+    fun setOutputFileName(output: String): VideoToGIF {
         this.outputFileName = output
         return this
     }
 
-    fun resize() {
+    fun setDuration(output: String): VideoToGIF {
+        this.duration = output
+        return this
+    }
+
+    fun setFPS(output: String): VideoToGIF {
+        this.fps = output
+        return this
+    }
+
+    fun setScale(output: String): VideoToGIF {
+        this.scale = output
+        return this
+    }
+
+    fun create() {
 
         if (video == null || !video!!.exists()) {
             callback!!.onFailure(IOException("File not exists"))
@@ -53,9 +72,7 @@ class VideoResizer private constructor(private val context: Context) {
 
         val outputLocation = Utils.getConvertedFile(outputPath, outputFileName)
 
-
-        //final String[] cmd = new String[]{"-i", video.getPath(), "-vf", "scale=320:240",outputLocation.getPath(),"-hide_banner"};
-        val cmd = arrayOf("-i", video!!.path, "-vf", "scale=1920:1080", outputLocation.path, "-hide_banner")
+        val cmd = arrayOf("-i", video!!.path, "-vf", "scale="+scale+":-1", "-t", duration, "-r", fps, outputLocation.path)
 
         try {
             FFmpeg.getInstance(context).execute(cmd, object : ExecuteBinaryResponseHandler() {
@@ -67,7 +84,7 @@ class VideoResizer private constructor(private val context: Context) {
 
                 override fun onSuccess(message: String?) {
                     Utils.refreshGallery(outputLocation.path, context)
-                    callback!!.onSuccess(outputLocation)
+                    callback!!.onSuccess(outputLocation, OutputType.TYPE_GIF)
 
                 }
 
@@ -78,11 +95,13 @@ class VideoResizer private constructor(private val context: Context) {
                     callback!!.onFailure(IOException(message))
                 }
 
-                override fun onFinish() {}
+                override fun onFinish() {
+                    callback!!.onFinish()
+                }
             })
         } catch (e: Exception) {
             callback!!.onFailure(e)
-        } catch (e2: FFmpegCommandAlreadyRunningException) {
+        }catch (e2: FFmpegCommandAlreadyRunningException) {
             callback!!.onNotAvailable(e2)
         }
 
@@ -90,11 +109,10 @@ class VideoResizer private constructor(private val context: Context) {
 
     companion object {
 
+        private val TAG = "VideoToGIF"
 
-        private val TAG = "VideoResizer"
-
-        fun with(context: Context): VideoResizer {
-            return VideoResizer(context)
+        fun with(context: Context): VideoToGIF {
+            return VideoToGIF(context)
         }
     }
 }

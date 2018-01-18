@@ -1,8 +1,8 @@
-package com.blackbox.ffmpeg.examples.tools
+package com.blackbox.ffmpeg.examples.tools.video
 
 import android.content.Context
 import com.blackbox.ffmpeg.examples.callback.FFMpegCallback
-import com.blackbox.ffmpeg.examples.utils.AudioFormat
+import com.blackbox.ffmpeg.examples.tools.OutputType
 import com.blackbox.ffmpeg.examples.utils.Utils
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg
@@ -17,18 +17,14 @@ import java.io.IOException
 class VideoTrimmer private constructor(private val context: Context) {
 
     private var video: File? = null
-    private var format: AudioFormat? = null
     private var callback: FFMpegCallback? = null
     private var outputPath = ""
     private var outputFileName = ""
+    private var startTime = "00:00:00"
+    private var endTime = "00:00:00"
 
     fun setFile(originalFiles: File): VideoTrimmer {
         this.video = originalFiles
-        return this
-    }
-
-    fun setFormat(format: AudioFormat): VideoTrimmer {
-        this.format = format
         return this
     }
 
@@ -47,6 +43,16 @@ class VideoTrimmer private constructor(private val context: Context) {
         return this
     }
 
+    fun setStartTime(startTime: String): VideoTrimmer {
+        this.startTime = startTime
+        return this
+    }
+
+    fun setEndTime(endTime: String): VideoTrimmer {
+        this.endTime = endTime
+        return this
+    }
+
     fun trim() {
 
         if (video == null || !video!!.exists()) {
@@ -60,8 +66,7 @@ class VideoTrimmer private constructor(private val context: Context) {
 
         val outputLocation = Utils.getConvertedFile(outputPath, outputFileName)
 
-        //Trim starting from 10 seconds and end at 16 seconds (total time 6 seconds)
-        val cmd = arrayOf("-i", video!!.path, "-ss", "00:00:03", "-t", "00:00:08", "-async", "1", outputLocation.path)
+        val cmd = arrayOf("-i", video!!.path, "-ss", startTime, "-t", endTime, "-c", "copy", outputLocation.path)
 
         try {
             FFmpeg.getInstance(context).execute(cmd, object : ExecuteBinaryResponseHandler() {
@@ -73,7 +78,7 @@ class VideoTrimmer private constructor(private val context: Context) {
 
                 override fun onSuccess(message: String?) {
                     Utils.refreshGallery(outputLocation.path, context)
-                    callback!!.onSuccess(outputLocation)
+                    callback!!.onSuccess(outputLocation, OutputType.TYPE_VIDEO)
 
                 }
 
@@ -84,7 +89,9 @@ class VideoTrimmer private constructor(private val context: Context) {
                     callback!!.onFailure(IOException(message))
                 }
 
-                override fun onFinish() {}
+                override fun onFinish() {
+                    callback!!.onFinish()
+                }
             })
         } catch (e: Exception) {
             callback!!.onFailure(e)

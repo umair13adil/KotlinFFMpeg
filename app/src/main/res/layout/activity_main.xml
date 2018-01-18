@@ -1,55 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/colorBackground"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:paddingTop="30dp"
+    style="@style/scrollbarStyleVertical"
+    android:scrollbarDefaultDelayBeforeFade="1000"
+    android:scrollbarFadeDuration="5000"
     tools:context="com.blackbox.ffmpeg.examples.MainActivity">
 
-    <Button
-        android:id="@+id/btn_create_movie"
-        style="@style/ButtonStyle"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="Make Movie" />
-
-    <Button
-        android:id="@+id/btn_trim_audio"
-        style="@style/ButtonStyle"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="Trim Audio" />
-
-    <Button
-        android:id="@+id/btn_trim_video"
-        style="@style/ButtonStyle"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="Trim Video" />
-
-    <Button
-        android:id="@+id/btn_merge_audio_video"
-        style="@style/ButtonStyle"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="Merge Audio Video" />
-
-    <Button
-        android:id="@+id/btn_resize_video"
-        style="@style/ButtonStyle"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="Resize Video" />
-
-    <TextView
-        android:id="@+id/txt_output"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:padding="10dp"
-        android:textColor="@color/colorPrimaryDark"/>
+        android:layout_height="match_parent">
 
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingTop="30dp">
+
+            <Button
+                android:id="@+id/btn_split_video"
+                style="@style/ButtonStyle"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="Split Video" />
+
+            <Button
+                android:id="@+id/btn_create_movie"
+                style="@style/ButtonStyle"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="Make Movie" />
+
+            <Button
+                android:id="@+id/btn_trim_audio"
+                style="@style/ButtonStyle"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="Trim Audio" />
+
+            <Button
+                android:id="@+id/btn_trim_video"
+                style="@style/ButtonStyle"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="Trim Video" />
+
+            <Button
+                android:id="@+id/btn_merge_audio_video"
+                style="@style/ButtonStyle"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="Merge Audio Video" />
+
+            <Button
+                android:id="@+id/btn_resize_video"
+                style="@style/ButtonStyle"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="Resize Video" />
+
+            <Button
+                android:id="@+id/btn_video_to_gif"
+                style="@style/ButtonStyle"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="Video 2 GIF" />
+
+            <Button
+                android:id="@+id/btn_video_to_images"
+                style="@style/ButtonStyle"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="Video 2 Images" />
+
+            <Button
+                android:id="@+id/btn_text_on_video"
+                style="@style/ButtonStyle"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="Text On Video" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</android.support.v4.widget.NestedScrollView>

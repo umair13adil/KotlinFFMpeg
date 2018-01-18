@@ -1,8 +1,8 @@
-package com.blackbox.ffmpeg.examples.tools
+package com.blackbox.ffmpeg.examples.tools.video
 
 import android.content.Context
 import com.blackbox.ffmpeg.examples.callback.FFMpegCallback
-import com.blackbox.ffmpeg.examples.utils.AudioFormat
+import com.blackbox.ffmpeg.examples.tools.OutputType
 import com.blackbox.ffmpeg.examples.utils.Utils
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg
@@ -13,18 +13,12 @@ import java.io.IOException
 class MovieMaker private constructor(private val context: Context) {
 
     private var images: Array<File>? = null
-    private var format: AudioFormat? = null
     private var callback: FFMpegCallback? = null
     private var outputPath = ""
     private var outputFileName = ""
 
     fun setFile(originalFiles: Array<File>): MovieMaker {
         this.images = originalFiles
-        return this
-    }
-
-    fun setFormat(format: AudioFormat): MovieMaker {
-        this.format = format
         return this
     }
 
@@ -71,7 +65,7 @@ class MovieMaker private constructor(private val context: Context) {
 
                 override fun onSuccess(message: String?) {
                     Utils.refreshGallery(outputLocation.path, context)
-                    callback!!.onSuccess(outputLocation)
+                    callback!!.onSuccess(outputLocation, OutputType.TYPE_VIDEO)
 
                 }
 
@@ -82,7 +76,9 @@ class MovieMaker private constructor(private val context: Context) {
                     callback!!.onFailure(IOException(message))
                 }
 
-                override fun onFinish() {}
+                override fun onFinish() {
+                    callback!!.onFinish()
+                }
             })
         } catch (e: Exception) {
             callback!!.onFailure(e)

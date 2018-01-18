@@ -17,4 +17,13 @@
         <item name="android:layout_margin">10dp</item>
     </style>
 
+    <style name="scrollbarStyleVertical">
+        <item name="android:scrollbarStyle">outsideOverlay</item>
+        <item name="android:scrollbars">vertical</item>
+        <item name="android:fadeScrollbars">true</item>
+        <item name="android:scrollbarThumbVertical">@drawable/scroll_bar_thumb</item>
+        <item name="android:scrollbarTrackVertical">@drawable/scroll_bar_track</item>
+        <item name="android:scrollbarSize">6dp</item>
+    </style>
+
 </resources>

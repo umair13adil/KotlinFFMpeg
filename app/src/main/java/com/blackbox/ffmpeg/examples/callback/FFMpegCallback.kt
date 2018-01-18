@@ -6,10 +6,12 @@ interface FFMpegCallback {
 
     fun onProgress(progress: String)
 
-    fun onSuccess(convertedFile: File)
+    fun onSuccess(convertedFile: File, type: String)
 
     fun onFailure(error: Exception)
 
     fun onNotAvailable(error: Exception)
+
+    fun onFinish()
 
 }

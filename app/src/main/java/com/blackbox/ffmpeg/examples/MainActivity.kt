@@ -1,7 +1,11 @@
 package com.blackbox.ffmpeg.examples
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
@@ -54,19 +58,15 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
         setContentView(R.layout.activity_main)
         this.context = this
 
-        //Copy Audio, Video & Images from resources to Storage Directory
-        audio = Utils.copyFileToExternalStorage(R.raw.audio, "audio.mp3", applicationContext)
-        audio2 = Utils.copyFileToExternalStorage(R.raw.audio, "audio2.mp3", applicationContext)
-        video = Utils.copyFileToExternalStorage(R.raw.video, "video.mp4", applicationContext)
-        video2 = Utils.copyFileToExternalStorage(R.raw.video, "video2.mp4", applicationContext)
-        font = Utils.copyFileToExternalStorage(R.font.roboto_black, "myFont.ttf", applicationContext)
-        images = arrayOf(
-                Utils.copyFileToExternalStorage(R.drawable.image1, "image1.png", applicationContext)
-                , Utils.copyFileToExternalStorage(R.drawable.image2, "image2.png", applicationContext)
-                , Utils.copyFileToExternalStorage(R.drawable.image3, "image3.png", applicationContext)
-                , Utils.copyFileToExternalStorage(R.drawable.image4, "image4.png", applicationContext)
-                , Utils.copyFileToExternalStorage(R.drawable.image5, "image5.png", applicationContext))
+        //Ask for permissions
+        if (ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this@MainActivity, arrayOf<String>(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE), 2222)
+        } else if (ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this@MainActivity, arrayOf<String>(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE), 2222)
+        }
 
+        //This will copy resources to storage directory
+        setUpResources()
 
         //This will create movie using audio & images saved in output directory name 'image%d.png'
         btn_create_movie.setOnClickListener {
@@ -308,11 +308,34 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
         }
     }
 
+    fun setUpResources() {
+        //Copy Audio, Video & Images from resources to Storage Directory
+        audio = Utils.copyFileToExternalStorage(R.raw.audio, "audio.mp3", applicationContext)
+        audio2 = Utils.copyFileToExternalStorage(R.raw.audio, "audio2.mp3", applicationContext)
+        video = Utils.copyFileToExternalStorage(R.raw.video, "video.mp4", applicationContext)
+        video2 = Utils.copyFileToExternalStorage(R.raw.video, "video2.mp4", applicationContext)
+        font = Utils.copyFileToExternalStorage(R.font.roboto_black, "myFont.ttf", applicationContext)
+        images = arrayOf(
+                Utils.copyFileToExternalStorage(R.drawable.image1, "image1.png", applicationContext)
+                , Utils.copyFileToExternalStorage(R.drawable.image2, "image2.png", applicationContext)
+                , Utils.copyFileToExternalStorage(R.drawable.image3, "image3.png", applicationContext)
+                , Utils.copyFileToExternalStorage(R.drawable.image4, "image4.png", applicationContext)
+                , Utils.copyFileToExternalStorage(R.drawable.image5, "image5.png", applicationContext))
+    }
+
     override fun onNotAvailable(error: Exception) {
         Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
 
         onProgress.run {
             onDismiss()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == 2222) {
+            setUpResources()
         }
     }
 }

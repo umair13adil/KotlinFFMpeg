@@ -6,8 +6,8 @@ App is pre loaded with audio, video, images, font resources which are useful for
 
 Each example will preview result in a dialog. Files are saved in local storage directory and can be directly accessed from there.
 
-![Alt text](pictures/image1.png?raw=true "Icon")<!-- .element height="50%" width="50%" -->
-![Alt text](pictures/image2.png?raw=true "Icon")<!-- .element height="50%" width="50%" -->
+![Alt text](pictures/image1.png)<!-- .element height="50%" width="50%" -->
+![Alt text](pictures/image2.png)<!-- .element height="50%" width="50%" -->
 
 ### FFMpeg Examples (Video):
 

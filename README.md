@@ -1,4 +1,4 @@
-# Kotlin FFMpeg Tools 
+# Kotlin FFMpeg Tools  [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Kotlin%20FFMpeg%20Tools-brightgreen.svg?style=flat)](https://android-arsenal.com/details/3/6699)
 ### Examples of using FFMpeg library on Android with Kotlin
 ##### `For Video, Audio and Image/GIF operations`. 
 

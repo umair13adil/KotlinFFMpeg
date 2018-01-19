@@ -124,6 +124,35 @@ Each example will preview result in a dialog. Files are saved in local storage d
                                 .setCallback(this@MainActivity)
                                 .extract()
 
+### CallBacks:
+
+You can implement callbacks of all tools using: **FFMpegCallback**.
+Just implement this in your Activity or Fragment. 
+
+It supports following callbacks:
+
+            override fun onProgress(progress: String) {
+                Log.i(TAG, "Running: $progress")
+            }
+        
+            override fun onSuccess(convertedFile: File, type: String) {
+                Toast.makeText(this, "Done!", Toast.LENGTH_SHORT).show()
+            }
+        
+            override fun onFailure(error: Exception) {
+                error.printStackTrace()
+            }
+        
+            override fun onFinish() {
+                //TODO Do something here
+            }
+        
+            override fun onNotAvailable(error: Exception) {
+                Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+
+
+
 ### Permissions:
 
 Following permissions must be added to avoid IO exceptions:

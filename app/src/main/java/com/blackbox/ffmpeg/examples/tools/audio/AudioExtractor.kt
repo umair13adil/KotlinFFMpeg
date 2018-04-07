@@ -43,50 +43,53 @@ class AudioExtractor private constructor(private val context: Context) {
 
     fun extract() {
 
-        if (video == null || !video!!.exists()) {
-            callback!!.onFailure(IOException("File not exists"))
-            return
-        }
-        if (!video!!.canRead()) {
-            callback!!.onFailure(IOException("Can't read the file. Missing permission?"))
-            return
-        }
+        video?.let {
 
-        val outputLocation = Utils.getConvertedFile(outputPath, outputFileName)
+            if (!video!!.exists()) {
+                callback!!.onFailure(IOException("File not exists"))
+                return
+            }
+            if (!video!!.canRead()) {
+                callback!!.onFailure(IOException("Can't read the file. Missing permission?"))
+                return
+            }
 
-        //Create Audio File with 192Kbps
-        //Select .mp3 format
-        val cmd = arrayOf("-i", video!!.path, "-vn", "-ar", "44100", "-ac", "2", "-ab", "192", "-f", "mp3", outputLocation.path)
+            val outputLocation = Utils.getConvertedFile(outputPath, outputFileName)
 
-        try {
-            FFmpeg.getInstance(context).execute(cmd, object : ExecuteBinaryResponseHandler() {
-                override fun onStart() {}
+            //Create Audio File with 192Kbps
+            //Select .mp3 format
+            val cmd = arrayOf("-i", video!!.path, "-vn", "-ar", "44100", "-ac", "2", "-ab", "192", "-f", "mp3", outputLocation.path)
 
-                override fun onProgress(message: String?) {
-                    callback!!.onProgress(message!!)
-                }
+            try {
+                FFmpeg.getInstance(context).execute(cmd, object : ExecuteBinaryResponseHandler() {
+                    override fun onStart() {}
 
-                override fun onSuccess(message: String?) {
-                    Utils.refreshGallery(outputLocation.path, context)
-                    callback!!.onSuccess(outputLocation, OutputType.TYPE_AUDIO)
-
-                }
-
-                override fun onFailure(message: String?) {
-                    if (outputLocation.exists()) {
-                        outputLocation.delete()
+                    override fun onProgress(message: String?) {
+                        callback!!.onProgress(message!!)
                     }
-                    callback!!.onFailure(IOException(message))
-                }
 
-                override fun onFinish() {
-                    callback!!.onFinish()
-                }
-            })
-        } catch (e: Exception) {
-            callback!!.onFailure(e)
-        } catch (e2: FFmpegCommandAlreadyRunningException) {
-            callback!!.onNotAvailable(e2)
+                    override fun onSuccess(message: String?) {
+                        Utils.refreshGallery(outputLocation.path, context)
+                        callback!!.onSuccess(outputLocation, OutputType.TYPE_AUDIO)
+
+                    }
+
+                    override fun onFailure(message: String?) {
+                        if (outputLocation.exists()) {
+                            outputLocation.delete()
+                        }
+                        callback!!.onFailure(IOException(message))
+                    }
+
+                    override fun onFinish() {
+                        callback!!.onFinish()
+                    }
+                })
+            } catch (e: Exception) {
+                callback!!.onFailure(e)
+            } catch (e2: FFmpegCommandAlreadyRunningException) {
+                callback!!.onNotAvailable(e2)
+            }
         }
 
     }

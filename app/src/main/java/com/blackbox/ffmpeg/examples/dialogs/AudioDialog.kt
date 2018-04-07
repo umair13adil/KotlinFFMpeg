@@ -52,8 +52,10 @@ class AudioDialog : DialogFragment() {
         val info = view.findViewById<AppCompatTextView>(R.id.video_info)
 
         //set audio file to MediaPlayer
-        mediaPlayer = MediaPlayer.create(activity, Uri.fromFile(file))
-        mediaPlayer.start()
+        if (file != null) {
+            mediaPlayer = MediaPlayer.create(activity, Uri.fromFile(file))
+            mediaPlayer.start()
+        }
 
         finalTime = mediaPlayer.duration.toLong()
         startTime = mediaPlayer.currentPosition.toLong()

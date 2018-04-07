@@ -16,6 +16,7 @@ import com.blackbox.ffmpeg.examples.dialogs.ProgressDialog
 import com.blackbox.ffmpeg.examples.dialogs.VideoDialog
 import com.blackbox.ffmpeg.examples.tools.OutputType
 import com.blackbox.ffmpeg.examples.tools.audio.AudioExtractor
+import com.blackbox.ffmpeg.examples.tools.audio.AudioMerger
 import com.blackbox.ffmpeg.examples.tools.audio.AudioTrimmer
 import com.blackbox.ffmpeg.examples.tools.image.VideoToGIF
 import com.blackbox.ffmpeg.examples.tools.image.VideoToImages
@@ -31,6 +32,7 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
 
     lateinit var audio: File
     lateinit var audio2: File
+    lateinit var audio3: File
     lateinit var video: File
     lateinit var video2: File
     lateinit var images: Array<File>
@@ -183,7 +185,7 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
 
             if (!inProgress) {
                 AudioVideoMerger.with(context!!)
-                        .setAudioFile(audio)
+                        .setAudioFile(audio3)
                         .setVideoFile(video2)
                         .setOutputPath(Utils.outputPath + "video")
                         .setOutputFileName("merged_" + System.currentTimeMillis() + ".mp4")
@@ -259,6 +261,23 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
         }
 
 
+        //This will merge two different audio files
+        btn_merge_audio.setOnClickListener {
+
+            if (!inProgress) {
+                AudioMerger.with(context!!)
+                        .setFile1(audio2)
+                        .setFile2(audio3)
+                        .setOutputPath(Utils.outputPath + "audio")
+                        .setOutputFileName("merged_" + System.currentTimeMillis() + ".mp3")
+                        .setCallback(this@MainActivity)
+                        .trim()
+
+                ProgressDialog.show(supportFragmentManager)
+            } else {
+                Toast.makeText(this, "Error: Operation already in progress!", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onProgress(progress: String) {
@@ -308,21 +327,6 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
         }
     }
 
-    fun setUpResources() {
-        //Copy Audio, Video & Images from resources to Storage Directory
-        audio = Utils.copyFileToExternalStorage(R.raw.audio, "audio.mp3", applicationContext)
-        audio2 = Utils.copyFileToExternalStorage(R.raw.audio, "audio2.mp3", applicationContext)
-        video = Utils.copyFileToExternalStorage(R.raw.video, "video.mp4", applicationContext)
-        video2 = Utils.copyFileToExternalStorage(R.raw.video, "video2.mp4", applicationContext)
-        font = Utils.copyFileToExternalStorage(R.font.roboto_black, "myFont.ttf", applicationContext)
-        images = arrayOf(
-                Utils.copyFileToExternalStorage(R.drawable.image1, "image1.png", applicationContext)
-                , Utils.copyFileToExternalStorage(R.drawable.image2, "image2.png", applicationContext)
-                , Utils.copyFileToExternalStorage(R.drawable.image3, "image3.png", applicationContext)
-                , Utils.copyFileToExternalStorage(R.drawable.image4, "image4.png", applicationContext)
-                , Utils.copyFileToExternalStorage(R.drawable.image5, "image5.png", applicationContext))
-    }
-
     override fun onNotAvailable(error: Exception) {
         Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
 
@@ -337,5 +341,22 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
         if (requestCode == 2222) {
             setUpResources()
         }
+    }
+
+
+    fun setUpResources() {
+        //Copy Audio, Video & Images from resources to Storage Directory
+        audio = Utils.copyFileToExternalStorage(R.raw.audio, "audio.mp3", applicationContext)
+        audio2 = Utils.copyFileToExternalStorage(R.raw.audio2, "audio2.mp3", applicationContext)
+        audio3 = Utils.copyFileToExternalStorage(R.raw.audio3, "audio3.mp3", applicationContext)
+        video = Utils.copyFileToExternalStorage(R.raw.video, "video.mp4", applicationContext)
+        video2 = Utils.copyFileToExternalStorage(R.raw.video2, "video2.mp4", applicationContext)
+        font = Utils.copyFileToExternalStorage(R.font.roboto_black, "myFont.ttf", applicationContext)
+        images = arrayOf(
+                Utils.copyFileToExternalStorage(R.drawable.image1, "image1.png", applicationContext)
+                , Utils.copyFileToExternalStorage(R.drawable.image2, "image2.png", applicationContext)
+                , Utils.copyFileToExternalStorage(R.drawable.image3, "image3.png", applicationContext)
+                , Utils.copyFileToExternalStorage(R.drawable.image4, "image4.png", applicationContext)
+                , Utils.copyFileToExternalStorage(R.drawable.image5, "image5.png", applicationContext))
     }
 }

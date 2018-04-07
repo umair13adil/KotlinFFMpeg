@@ -5,6 +5,7 @@
     <string name="txt_split_video">Split Video</string>
     <string name="txt_make_movie">Make Movie</string>
     <string name="txt_extract_audio">Extract Audio</string>
+    <string name="txt_merge_audio">Merge Audios</string>
     <string name="txt_trim_audio">Trim Audio</string>
     <string name="txt_trim_video">Trim Video</string>
     <string name="txt_merge_audio_video">Merge Audio Video</string>

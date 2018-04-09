@@ -271,7 +271,7 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
                         .setOutputPath(Utils.outputPath + "audio")
                         .setOutputFileName("merged_" + System.currentTimeMillis() + ".mp3")
                         .setCallback(this@MainActivity)
-                        .trim()
+                        .merge()
 
                 ProgressDialog.show(supportFragmentManager)
             } else {

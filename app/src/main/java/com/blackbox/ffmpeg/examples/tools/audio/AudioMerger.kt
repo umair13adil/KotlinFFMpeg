@@ -47,7 +47,7 @@ class AudioMerger private constructor(private val context: Context) {
         return this
     }
 
-    fun trim() {
+    fun merge() {
 
         if ((audio1 == null || !audio1!!.exists()) || (audio2 == null || !audio2!!.exists())) {
             callback!!.onFailure(IOException("File not exists"))

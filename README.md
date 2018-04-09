@@ -99,6 +99,17 @@ Each example will preview result in a dialog. Files are saved in local storage d
                                 .setCallback(this@MainActivity)
                                 .extract()
 
+3. Merge/Overlay two Audio files
+
+        AudioMerger.with(context!!)
+                               .setFile1(audio2)
+                               .setFile2(audio3)
+                               .setOutputPath(Utils.outputPath + "audio")
+                               .setOutputFileName("merged_" + System.currentTimeMillis() + ".mp3")
+                               .setCallback(this@MainActivity)
+                               .merge()
+
+
 ### FFMpeg Examples (Image):
 
 1. Convert video to GIF 

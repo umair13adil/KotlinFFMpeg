@@ -75,6 +75,17 @@ Each example will preview result in a dialog. Files are saved in local storage d
                                 .setOutputFileName("merged_" + System.currentTimeMillis() + ".mp4")
                                 .setCallback(this@MainActivity)
                                 .merge()
+                                
+7. Merge/Concatenate multiple video files into single video file
+
+        val videoList = arrayListOf<File>(videoSmall1, video, video2)
+        
+        VideoMerger.with(context!!)
+                                .setVideoFiles(videoList) //Video Files list
+                                .setOutputPath("PATH_TO_OUTPUT_VIDEO")
+                                .setOutputFileName("merged_" + System.currentTimeMillis() + ".mp4")
+                                .setCallback(this@MainActivity)
+                                .merge()
 
 ### FFMpeg Examples (Audio):
 
@@ -100,6 +111,7 @@ Each example will preview result in a dialog. Files are saved in local storage d
                                 .extract()
 
 3. Merge/Overlay two Audio files
+
 
         AudioMerger.with(context!!)
                                .setFile1(audio2)
@@ -162,7 +174,17 @@ It supports following callbacks:
                 Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
             }
 
+### Stop/Kill ongoing process:
 
+            fun stopRunningProcess() {
+                    FFmpeg.getInstance(this).killRunningProcesses()
+            }
+            
+### Check if any process is running:
+
+            fun isRunning(): Boolean {
+                    return FFmpeg.getInstance(this).isFFmpegCommandRunning
+            }
 
 ### Permissions:
 

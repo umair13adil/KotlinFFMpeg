@@ -97,7 +97,7 @@ class VideoToImages private constructor(private val context: Context) {
 
     companion object {
 
-        private val TAG = "VideoToImages"
+        val TAG = "VideoToImages"
 
         fun with(context: Context): VideoToImages {
             return VideoToImages(context)

@@ -97,7 +97,7 @@ class VideoSplitter private constructor(private val context: Context) {
 
     companion object {
 
-        private val TAG = "VideoSplitter"
+        val TAG = "VideoSplitter"
 
         fun with(context: Context): VideoSplitter {
             return VideoSplitter(context)

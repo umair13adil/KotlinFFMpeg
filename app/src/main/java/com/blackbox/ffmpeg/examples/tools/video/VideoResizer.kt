@@ -98,7 +98,7 @@ class VideoResizer private constructor(private val context: Context) {
     companion object {
 
 
-        private val TAG = "VideoResizer"
+        val TAG = "VideoResizer"
 
         fun with(context: Context): VideoResizer {
             return VideoResizer(context)

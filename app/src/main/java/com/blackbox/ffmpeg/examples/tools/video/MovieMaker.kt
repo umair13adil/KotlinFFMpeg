@@ -91,7 +91,7 @@ class MovieMaker private constructor(private val context: Context) {
 
     companion object {
 
-        private val TAG = "MovieMaker"
+        val TAG = "MovieMaker"
 
         fun with(context: Context): MovieMaker {
             return MovieMaker(context)

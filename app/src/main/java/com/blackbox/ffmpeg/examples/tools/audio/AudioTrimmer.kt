@@ -95,6 +95,7 @@ class AudioTrimmer private constructor(private val context: Context) {
                     callback!!.onFinish()
                 }
             })
+
         } catch (e: Exception) {
             callback!!.onFailure(e)
         } catch (e2: FFmpegCommandAlreadyRunningException) {
@@ -105,7 +106,7 @@ class AudioTrimmer private constructor(private val context: Context) {
 
     companion object {
 
-        private val TAG = "AudioTrimmer"
+        val TAG = "AudioTrimmer"
 
         fun with(context: Context): AudioTrimmer {
             return AudioTrimmer(context)

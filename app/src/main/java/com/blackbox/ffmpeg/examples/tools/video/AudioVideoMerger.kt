@@ -97,7 +97,7 @@ class AudioVideoMerger private constructor(private val context: Context) {
 
     companion object {
 
-        private val TAG = "AudioVideoMerger"
+        val TAG = "AudioVideoMerger"
 
         fun with(context: Context): AudioVideoMerger {
             return AudioVideoMerger(context)

@@ -96,7 +96,7 @@ class AudioExtractor private constructor(private val context: Context) {
 
     companion object {
 
-        private val TAG = "AudioExtractor"
+        val TAG = "AudioExtractor"
 
         fun with(context: Context): AudioExtractor {
             return AudioExtractor(context)

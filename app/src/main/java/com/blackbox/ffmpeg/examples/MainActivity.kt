@@ -22,6 +22,7 @@ import com.blackbox.ffmpeg.examples.tools.image.VideoToGIF
 import com.blackbox.ffmpeg.examples.tools.image.VideoToImages
 import com.blackbox.ffmpeg.examples.tools.video.*
 import com.blackbox.ffmpeg.examples.utils.Utils
+import com.github.hiteshsondhi88.libffmpeg.FFmpeg
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
@@ -35,10 +36,9 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
     lateinit var audio3: File
     lateinit var video: File
     lateinit var video2: File
+    lateinit var videoSmall1: File
     lateinit var images: Array<File>
     lateinit var font: File
-
-    var inProgress = false
 
     //Used to publish progress to dialog fragment
     interface ProgressPublish {
@@ -73,7 +73,10 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
         //This will create movie using audio & images saved in output directory name 'image%d.png'
         btn_create_movie.setOnClickListener {
 
-            if (!inProgress) {
+            //Kill previous running process
+            stopRunningProcess()
+
+            if (!isRunning()) {
                 MovieMaker.with(context!!)
                         .setAudio(audio2)
                         .setOutputPath(Utils.outputPath + "video")
@@ -81,16 +84,19 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
                         .setCallback(this@MainActivity)
                         .convert()
 
-                ProgressDialog.show(supportFragmentManager)
+                ProgressDialog.show(supportFragmentManager, MovieMaker.TAG)
             } else {
-                Toast.makeText(this, "Error: Operation already in progress!", Toast.LENGTH_SHORT).show()
+                showInProgressToast()
             }
         }
 
         //This will extract audio as .mp3 from a video
         btn_extract_audio.setOnClickListener {
 
-            if (!inProgress) {
+            //Kill previous running process
+            stopRunningProcess()
+
+            if (!isRunning()) {
                 AudioExtractor.with(context!!)
                         .setFile(video2)
                         .setOutputPath(Utils.outputPath + "audio")
@@ -98,16 +104,19 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
                         .setCallback(this@MainActivity)
                         .extract()
 
-                ProgressDialog.show(supportFragmentManager)
+                ProgressDialog.show(supportFragmentManager, AudioExtractor.TAG)
             } else {
-                Toast.makeText(this, "Error: Operation already in progress!", Toast.LENGTH_SHORT).show()
+                showInProgressToast()
             }
         }
 
         //This will cut audio for given start and end times
         btn_trim_audio.setOnClickListener {
 
-            if (!inProgress) {
+            //Kill previous running process
+            stopRunningProcess()
+
+            if (!isRunning()) {
                 AudioTrimmer.with(context!!)
                         .setFile(audio2)
                         .setStartTime("00:00:05") //Start at 5 seconds
@@ -117,16 +126,19 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
                         .setCallback(this@MainActivity)
                         .trim()
 
-                ProgressDialog.show(supportFragmentManager)
+                ProgressDialog.show(supportFragmentManager, AudioTrimmer.TAG)
             } else {
-                Toast.makeText(this, "Error: Operation already in progress!", Toast.LENGTH_SHORT).show()
+                showInProgressToast()
             }
         }
 
         //This will cut video for given start and end times
         btn_trim_video.setOnClickListener {
 
-            if (!inProgress) {
+            //Kill previous running process
+            stopRunningProcess()
+
+            if (!isRunning()) {
                 VideoTrimmer.with(context!!)
                         .setFile(video)
                         .setStartTime("00:00:15") // Start from 15 seconds
@@ -136,16 +148,19 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
                         .setCallback(this@MainActivity)
                         .trim()
 
-                ProgressDialog.show(supportFragmentManager)
+                ProgressDialog.show(supportFragmentManager, VideoTrimmer.TAG)
             } else {
-                Toast.makeText(this, "Error: Operation already in progress!", Toast.LENGTH_SHORT).show()
+                showInProgressToast()
             }
         }
 
         //This will split video into given time segments
         btn_split_video.setOnClickListener {
 
-            if (!inProgress) {
+            //Kill previous running process
+            stopRunningProcess()
+
+            if (!isRunning()) {
                 VideoSplitter.with(context!!)
                         .setFile(video)
                         .setOutputPath(Utils.outputPath + "video")
@@ -154,9 +169,9 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
                         .setCallback(this@MainActivity)
                         .split()
 
-                ProgressDialog.show(supportFragmentManager)
+                ProgressDialog.show(supportFragmentManager, VideoSplitter.TAG)
             } else {
-                Toast.makeText(this, "Error: Operation already in progress!", Toast.LENGTH_SHORT).show()
+                showInProgressToast()
             }
         }
 
@@ -164,7 +179,10 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
         //Note: Size must be in this format = width:height
         btn_resize_video.setOnClickListener {
 
-            if (!inProgress) {
+            //Kill previous running process
+            stopRunningProcess()
+
+            if (!isRunning()) {
                 VideoResizer.with(context!!)
                         .setFile(video2)
                         .setSize("320:480") //320 X 480
@@ -173,9 +191,10 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
                         .setCallback(this@MainActivity)
                         .resize()
 
-                ProgressDialog.show(supportFragmentManager)
+                ProgressDialog.show(supportFragmentManager, VideoResizer.TAG)
+
             } else {
-                Toast.makeText(this, "Error: Operation already in progress!", Toast.LENGTH_SHORT).show()
+                showInProgressToast()
             }
         }
 
@@ -183,7 +202,10 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
         //Original Audio of video will be replaced.
         btn_merge_audio_video.setOnClickListener {
 
-            if (!inProgress) {
+            //Kill previous running process
+            stopRunningProcess()
+
+            if (!isRunning()) {
                 AudioVideoMerger.with(context!!)
                         .setAudioFile(audio3)
                         .setVideoFile(video2)
@@ -192,16 +214,19 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
                         .setCallback(this@MainActivity)
                         .merge()
 
-                ProgressDialog.show(supportFragmentManager)
+                ProgressDialog.show(supportFragmentManager, AudioVideoMerger.TAG)
             } else {
-                Toast.makeText(this, "Error: Operation already in progress!", Toast.LENGTH_SHORT).show()
+                showInProgressToast()
             }
         }
 
         //This will convert video to GIF.
         btn_video_to_gif.setOnClickListener {
 
-            if (!inProgress) {
+            //Kill previous running process
+            stopRunningProcess()
+
+            if (!isRunning()) {
                 VideoToGIF.with(context!!)
                         .setFile(video)
                         .setOutputPath(Utils.outputPath + "images")
@@ -212,16 +237,19 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
                         .setCallback(this@MainActivity)
                         .create()
 
-                ProgressDialog.show(supportFragmentManager)
+                ProgressDialog.show(supportFragmentManager, VideoToGIF.TAG)
             } else {
-                Toast.makeText(this, "Error: Operation already in progress!", Toast.LENGTH_SHORT).show()
+                showInProgressToast()
             }
         }
 
         //This will extract images from video in provided time
         btn_video_to_images.setOnClickListener {
 
-            if (!inProgress) {
+            //Kill previous running process
+            stopRunningProcess()
+
+            if (!isRunning()) {
                 VideoToImages.with(context!!)
                         .setFile(video2)
                         .setOutputPath(Utils.outputPath + "images")
@@ -230,16 +258,19 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
                         .setCallback(this@MainActivity)
                         .extract()
 
-                ProgressDialog.show(supportFragmentManager)
+                ProgressDialog.show(supportFragmentManager, VideoToImages.TAG)
             } else {
-                Toast.makeText(this, "Error: Operation already in progress!", Toast.LENGTH_SHORT).show()
+                showInProgressToast()
             }
         }
 
         //This will add text overlay on video
         btn_text_on_video.setOnClickListener {
 
-            if (!inProgress) {
+            //Kill previous running process
+            stopRunningProcess()
+
+            if (!isRunning()) {
                 TextOnVideo.with(context!!)
                         .setFile(video2)
                         .setOutputPath(Utils.outputPath + "video")
@@ -254,9 +285,9 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
                         .draw()
 
 
-                ProgressDialog.show(supportFragmentManager)
+                ProgressDialog.show(supportFragmentManager, TextOnVideo.TAG)
             } else {
-                Toast.makeText(this, "Error: Operation already in progress!", Toast.LENGTH_SHORT).show()
+                showInProgressToast()
             }
         }
 
@@ -264,7 +295,10 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
         //This will merge two different audio files
         btn_merge_audio.setOnClickListener {
 
-            if (!inProgress) {
+            //Kill previous running process
+            stopRunningProcess()
+
+            if (!isRunning()) {
                 AudioMerger.with(context!!)
                         .setFile1(audio2)
                         .setFile2(audio3)
@@ -273,9 +307,31 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
                         .setCallback(this@MainActivity)
                         .merge()
 
-                ProgressDialog.show(supportFragmentManager)
+                ProgressDialog.show(supportFragmentManager, AudioMerger.TAG)
             } else {
-                Toast.makeText(this, "Error: Operation already in progress!", Toast.LENGTH_SHORT).show()
+                showInProgressToast()
+            }
+        }
+
+        //This will merge multiple mp4 video files into single mp4 file
+        btn_merge_videos.setOnClickListener {
+
+            //Kill previous running process
+            stopRunningProcess()
+
+            val videoList = arrayListOf<File>(videoSmall1, video, video2)
+
+            if (!isRunning()) {
+                VideoMerger.with(context!!)
+                        .setVideoFiles(videoList)
+                        .setOutputPath(Utils.outputPath + "video")
+                        .setOutputFileName("merged_" + System.currentTimeMillis() + ".mp4")
+                        .setCallback(this@MainActivity)
+                        .merge()
+
+                ProgressDialog.show(supportFragmentManager, VideoMerger.TAG)
+            } else {
+                showInProgressToast()
             }
         }
     }
@@ -284,9 +340,6 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
 
         //Prints log of progress
         Log.i(TAG, "Running: $progress")
-
-        //Set this flag to disable any other action until first one is completed
-        inProgress = true
 
         onProgress.run {
             onProgress(progress)
@@ -308,19 +361,12 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
         error.printStackTrace()
         Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
 
-        //Allow other actions
-        inProgress = false
-
-
         onProgress.run {
             onDismiss()
         }
     }
 
     override fun onFinish() {
-
-        //Allow other actions
-        inProgress = false
 
         onProgress.run {
             onDismiss()
@@ -344,13 +390,14 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
     }
 
 
-    fun setUpResources() {
+    private fun setUpResources() {
         //Copy Audio, Video & Images from resources to Storage Directory
         audio = Utils.copyFileToExternalStorage(R.raw.audio, "audio.mp3", applicationContext)
         audio2 = Utils.copyFileToExternalStorage(R.raw.audio2, "audio2.mp3", applicationContext)
         audio3 = Utils.copyFileToExternalStorage(R.raw.audio3, "audio3.mp3", applicationContext)
         video = Utils.copyFileToExternalStorage(R.raw.video, "video.mp4", applicationContext)
         video2 = Utils.copyFileToExternalStorage(R.raw.video2, "video2.mp4", applicationContext)
+        videoSmall1 = Utils.copyFileToExternalStorage(R.raw.video_small_1, "video_small_1.mp4", applicationContext)
         font = Utils.copyFileToExternalStorage(R.font.roboto_black, "myFont.ttf", applicationContext)
         images = arrayOf(
                 Utils.copyFileToExternalStorage(R.drawable.image1, "image1.png", applicationContext)
@@ -358,5 +405,17 @@ class MainActivity : AppCompatActivity(), FFMpegCallback {
                 , Utils.copyFileToExternalStorage(R.drawable.image3, "image3.png", applicationContext)
                 , Utils.copyFileToExternalStorage(R.drawable.image4, "image4.png", applicationContext)
                 , Utils.copyFileToExternalStorage(R.drawable.image5, "image5.png", applicationContext))
+    }
+
+    private fun stopRunningProcess() {
+        FFmpeg.getInstance(this).killRunningProcesses()
+    }
+
+    private fun isRunning(): Boolean {
+        return FFmpeg.getInstance(this).isFFmpegCommandRunning
+    }
+
+    private fun showInProgressToast(){
+        Toast.makeText(this, "Operation already in progress! Try again in a while.", Toast.LENGTH_SHORT).show()
     }
 }

@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/txt_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="100dp"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="Name"
+        android:textSize="24sp"
+        android:textStyle="bold|italic" />
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/txt_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="55dp"
+        android:ellipsize="end"
+        android:lines="4"
+        android:maxLines="4"
         android:padding="10dp"
         android:text="progress"
         android:textSize="16sp" />
@@ -20,5 +35,15 @@
         android:layout_gravity="center"
         android:indeterminate="true"
         android:visibility="gone" />
+
+    <Button
+        android:id="@+id/stop"
+        style="@style/ButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="150dp"
+        android:text="Stop" />
 
 </FrameLayout>

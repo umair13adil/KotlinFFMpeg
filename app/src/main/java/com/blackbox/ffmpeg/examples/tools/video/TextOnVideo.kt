@@ -136,7 +136,7 @@ class TextOnVideo private constructor(private val context: Context) {
 
     companion object {
 
-        private val TAG = "TextOnVideo"
+        val TAG = "TextOnVideo"
 
         fun with(context: Context): TextOnVideo {
             return TextOnVideo(context)

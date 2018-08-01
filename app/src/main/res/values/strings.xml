@@ -9,6 +9,7 @@
     <string name="txt_trim_audio">Trim Audio</string>
     <string name="txt_trim_video">Trim Video</string>
     <string name="txt_merge_audio_video">Merge Audio Video</string>
+    <string name="txt_merge_videos">Merge Videos</string>
     <string name="txt_resize_video">Resize Video</string>
     <string name="txt_video_to_gif">Video 2 GIF</string>
     <string name="txt_video_to_images">Video 2 Images</string>

@@ -109,7 +109,7 @@ class VideoToGIF private constructor(private val context: Context) {
 
     companion object {
 
-        private val TAG = "VideoToGIF"
+        val TAG = "VideoToGIF"
 
         fun with(context: Context): VideoToGIF {
             return VideoToGIF(context)

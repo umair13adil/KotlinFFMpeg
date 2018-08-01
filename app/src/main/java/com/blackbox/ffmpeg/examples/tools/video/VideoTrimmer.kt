@@ -103,7 +103,7 @@ class VideoTrimmer private constructor(private val context: Context) {
 
     companion object {
 
-        private val TAG = "VideoTrimmer"
+        val TAG = "VideoTrimmer"
 
         fun with(context: Context): VideoTrimmer {
             return VideoTrimmer(context)

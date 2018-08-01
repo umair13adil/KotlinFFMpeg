@@ -99,7 +99,7 @@ class AudioMerger private constructor(private val context: Context) {
 
     companion object {
 
-        private val TAG = "AudioMerger"
+        val TAG = "AudioMerger"
 
         fun with(context: Context): AudioMerger {
             return AudioMerger(context)
